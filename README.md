@@ -27,6 +27,16 @@ A collodion wet plate — blue-sensitive and seconds long — as an FFGL effect 
 Resolume. Resolume's bundled demo clip on the default tintype, half a second of
 exposure.</sub>
 
+[![Wetplate — a wet collodion plate, blue-blind and seconds long, for Resolume](docs/video-thumb.png)](https://www.youtube.com/watch?v=jLU2btmbRLM)
+
+*[Watch it](https://www.youtube.com/watch?v=jLU2btmbRLM) — 67 seconds:
+the clip against the plate (orange skin dark, blue boots white), red text all but vanishing,
+Exposure stacking a ring's orbit into ghosts, a take capping the lens and holding the developed
+plate, tintype, ambrotype and negative, the pour's corner, drainage, bare edge and defects,
+Development and Sensitivity, two buckets against sixteen, Tone, and Mix back to the clip.
+Rendered by the plugin's own harness over Resolume's bundled demo clips, not captured from
+Resolume.*
+
 ## The one idea
 
 A wet collodion plate (1850s–80s, and the tintype revival) is silver halide in
