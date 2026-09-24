@@ -49,6 +49,8 @@ the coating.
 - The checks can fail: `./build/wttest --negative`; one perturbation verbosely:
   `./build/wttest --perturb BITS --ghost` (bits in `Model.h`)
 - Every check takes `--size WxH`; CI runs them at 320x180
+- CI's renderer, on this Mac: `WTTEST_RENDERER=software ./build/wttest --resize --size 320x180`
+  (Apple's software renderer, not repeatable at the last bit; verify.sh runs every check on it)
 - No name over 16 characters, none duplicated: `./build/wttest --names`
 - No dead controls: `python3 tools/sweep.py` (`--size WxH`, `--jobs N`)
 - Render cost and the state held: `./build/wttest --bench` (best of three; the GPU here is shared)

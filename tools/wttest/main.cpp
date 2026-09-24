@@ -59,6 +59,7 @@
 #include <csignal>
 #include <cstdarg>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <fstream>
 #include <map>
@@ -235,9 +236,29 @@ CGLContextObj createContext()
 		static_cast< CGLPixelFormatAttribute >( 0 )
 	};
 
+	//WTTEST_RENDERER=software asks for Apple's software renderer by id, on a
+	//Mac that has a GPU. It is what a GPU-less CI runner falls back to, and it
+	//is not bit-repeatable frame to frame (repousse's resize check failed CI
+	//by one ulp), so a check that would fail only in CI can be run here first
+	//(wipe's recipe, by way of repousse).
+	const CGLPixelFormatAttribute generic[] = {
+		kCGLPFAOpenGLProfile, static_cast< CGLPixelFormatAttribute >( kCGLOGLPVersion_GL4_Core ),
+		kCGLPFARendererID, static_cast< CGLPixelFormatAttribute >( kCGLRendererGenericFloatID ),
+		kCGLPFAColorSize, static_cast< CGLPixelFormatAttribute >( 24 ),
+		kCGLPFAAlphaSize, static_cast< CGLPixelFormatAttribute >( 8 ),
+		static_cast< CGLPixelFormatAttribute >( 0 )
+	};
+
 	CGLPixelFormatObj format = nullptr;
 	GLint formatCount        = 0;
-	if( CGLChoosePixelFormat( accelerated, &format, &formatCount ) != kCGLNoError || format == nullptr )
+	const char* renderer     = std::getenv( "WTTEST_RENDERER" );
+	if( renderer != nullptr && std::strcmp( renderer, "software" ) == 0 )
+	{
+		if( CGLChoosePixelFormat( generic, &format, &formatCount ) != kCGLNoError || format == nullptr )
+			return nullptr;
+		std::fprintf( stderr, "wttest: WTTEST_RENDERER=software, Apple's software renderer\n" );
+	}
+	else if( CGLChoosePixelFormat( accelerated, &format, &formatCount ) != kCGLNoError || format == nullptr )
 	{
 		if( CGLChoosePixelFormat( software, &format, &formatCount ) != kCGLNoError || format == nullptr )
 			return nullptr;

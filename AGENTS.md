@@ -207,6 +207,11 @@ Deliberately NOT relied on: `pow(1, x) == 1` (white is tested within a tolerance
 anywhere, implicit derivatives (the shaders take none), or the input texture's
 filter (the expose pass uses `texelFetch`).
 
+Every check also runs, in `verify.sh`, on Apple's software renderer
+(`WTTEST_RENDERER=software`), which is what GitHub's macOS runner falls back to
+and which is not repeatable at the last bit (repousse's resize check failed CI by
+one ulp, 2026-09-24). All eight pass there with the tolerances above unchanged.
+
 What might still differ on another rasteriser: the resample pass is a filtered
 read, which on a flat field is exact but on a picture is the driver's bilinear; the
 bare edge's `smoothstep` and the defects' discs are antialiased by arithmetic and

@@ -139,6 +139,20 @@ for size in 320x180 1280x720; do
 	done
 done
 
+# The whole physics list again on Apple's SOFTWARE renderer, which is what
+# GitHub's macOS runners have. It is not repeatable at the last bit (repousse's
+# resize check failed CI by one ulp), so a check that asserts exactness on this
+# Mac's GPU is found here before CI finds it.
+step "physics at 320x180 on the software renderer (CI's)"
+for check in spectral ghost bucket curve drainage take resize negative; do
+	if out=$(WTTEST_RENDERER=software "$WTTEST" --$check --size 320x180 2>&1); then
+		pass "wttest --$check (software): $( printf '%s\n' "$out" | grep -v '^$' | tail -1 )"
+	else
+		fail "wttest --$check at 320x180 on the software renderer -- run: WTTEST_RENDERER=software $WTTEST --$check --size 320x180"
+		printf '%s\n' "$out" | sed 's/^/      /'
+	fi
+done
+
 step "names"
 if out=$("$WTTEST" --names 2>&1); then
 	pass "$( printf '%s\n' "$out" | grep -v '^$' | tail -1 )"
