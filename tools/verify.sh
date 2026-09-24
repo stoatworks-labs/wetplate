@@ -20,6 +20,8 @@
 #                 plugin hands the driver. Then a grep for every GLSL 4.10
 #                 reserved word used as an identifier, because Apple's compiler
 #                 and glslc accept some (`packed`) that Mesa refuses.
+#   demo          the browser demo's copy of every shader is still the
+#                 plugin's, character for character (demo/tools/check_shaders.py).
 #   physics       every harness check, at TWO rasters: 320x180, which is what
 #                 CI renders at, and 1280x720. A check that holds at one raster
 #                 was fitted to it. Each is measured out of the picture:
@@ -126,6 +128,24 @@ else
 	printf '%s\n' "$hits" | sed 's/^/      /'
 fi
 rm -rf "$dir"
+
+#---------------------------------------------------------------------------
+# The browser demo's copy of every shader is the plugin's, character for
+# character. A drifted comment counts. It says nothing about the page's PORT
+# of the CPU half (the clock, the ring, the window, the take, the laws) or the
+# page's own sum pass; only a reader checks those.
+#---------------------------------------------------------------------------
+step "demo shaders"
+if [ -f demo/tools/check_shaders.py ]; then
+	if out=$(python3 demo/tools/check_shaders.py 2>&1); then
+		pass "$( printf '%s\n' "$out" | tail -1 )"
+	else
+		fail "the demo's shaders have drifted from source/Shaders.cpp"
+		printf '%s\n' "$out" | tail -12
+	fi
+else
+	printf '   skipped: no demo/\n'
+fi
 
 for size in 320x180 1280x720; do
 	step "physics at $size"

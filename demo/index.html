@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Wetplate — browser demo | Stoatworks Labs</title>
+    <meta name="description" content="Try the Wetplate FFGL plugin for Resolume in your browser: a collodion wet plate, blue-blind and seconds long. The plugin's own expose, coating, resample and plate shaders ported to WebGL2, with its ring of bucket sums, its window, its take and its control laws ported to JavaScript; the sum pass is the page's own because the plugin's will not compile in a browser." />
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./vendor/kit.css" />
+    <link rel="canonical" href="https://wetplate-demo.stoatworks-labs.com/" />
+  </head>
+  <body>
+    <main id="demo">
+      <noscript>
+        <p>
+          This demo runs the plugin's shaders in your browser, so it needs
+          JavaScript and WebGL2. The plugin itself, its source and its downloads
+          are on
+          <a href="https://github.com/stoatworks-labs/wetplate">its repository</a>.
+        </p>
+      </noscript>
+    </main>
+
+    <script type="module" src="./plugin.js"></script>
+    <script
+      src="./vendor/support-footer.js"
+      defer
+      data-app="Wetplate"
+      data-repo="https://github.com/stoatworks-labs/wetplate"
+      data-note="A browser demo of the plugin's shaders and a port of its ring, its window and its control laws. Nothing you load here leaves your machine."
+    ></script>
+  </body>
+</html>

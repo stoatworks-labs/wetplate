@@ -86,6 +86,7 @@ The pipeline, in order:
 | `tools/wttest/` | The offline harness: renders, measures, benchmarks, pipes, dumps shaders. |
 | `tools/sweep.py` | No control is silently dead. |
 | `tools/verify.sh` | All of it, at two rasters, plus the release-time checks done locally. |
+| `demo/` | The browser demo: `plugin.js` holds the seven shader bodies verbatim (assembled as `Shaders.cpp` assembles them) and a hand PORT of the CPU half; `tools/check_shaders.py` keeps the shaders identical (verify.sh runs it); `vendor/` is the shared kit from `stoatworks-backend/resolume-demo` (never edit it, re-run `sync.sh`). See *The browser demo* below. |
 
 ### The ring, precisely
 
@@ -284,7 +285,8 @@ tree was clean before and after.
 - **Test hooks live in the shipped plugin** (the `Perturb` bits in the shader and the
   CPU, `Probe` in the plate pass), always zero.
 - **No factory presets, no seed control, no OpenFX.** The user guide and the browser
-  demo came with the release.
+  demo came with the release; the demo (*The browser demo*, below) is a port that only
+  a reader checks.
 
 ---
 
@@ -353,6 +355,92 @@ build, at 320×180 and 1280×720.
 - **`StoatworksAbout.h` and `ATTRIBUTIONS.md` are generated** by the backend's
   `sync-about.py` and `sync-attributions.py`; do not hand-edit them.
 - **Nothing has been through a show.**
+- **The browser demo's CPU half is a port** nothing checks but a reader, measured once
+  on one frame (below); its sum pass is the page's, not the plugin's.
+
+---
+
+## The browser demo
+
+`demo/` is the page at **wetplate-demo.stoatworks-labs.com**, a static-assets Worker
+deployed from `wrangler.toml` with `cf-run npx wrangler deploy` and by
+`.github/workflows/deploy.yml` on every push to main (no build step; what is
+committed is what is served). `demo/vendor/` is the shared kit from
+`stoatworks-backend/resolume-demo/` and is not edited here. The host is a Worker
+**route** plus a proxied `AAAA 100::` DNS record, not a custom domain: the zone hit
+Cloudflare's 100-custom-domain limit on 2026-09-24. Delete that record and the page
+goes dark while deploys stay green.
+
+The page carries the plugin's seven shader bodies — `kVertexBody`, `kModel`,
+`kExposeBody`, `kSumBody`, `kCoatingBody`, `kResampleBody`, `kPlateBody` — copied
+unedited and assembled as `Shaders.cpp`'s `assemble` assembles them (version, the
+model library for expose, coating and plate, the body); the kit's `port()` swaps the
+version line for ES 3.00 and adds precision qualifiers, nothing else.
+`demo/tools/check_shaders.py` compares all seven with `source/Shaders.cpp` character
+for character, plus the assembly and which bodies take the model, and
+`tools/verify.sh` fails if one drifts. The literals were spliced in by a script that
+replaces each `const NAME = \`…\`;` body from the C++ (tabs preserved); after a
+shader change, do that again rather than paste by hand.
+
+### ☠️ The sum pass does not compile in GLSL ES 3.00
+
+`kSumBody` indexes `uniform sampler2D Bucket[ 16 ]` with the loop variable, which
+desktop GL 4.10 allows and ES 3.00 §4.1.7.1 forbids: ANGLE says
+`'[' : array index for samplers must be constant integral expressions`. The kit's
+rule is that such a shader is said, not edited. So the page carries `SUM` verbatim
+and checked, tries to compile it on every load and prints the compiler's verdict on
+the line under the picture, and sums the window with a pass of its own: `PAGE_SUM`,
+one bucket times its weight, drawn once per bucket for i = 0..Count−1 with
+GL_ONE / GL_ONE blending into the same R32F exposure buffer. That is the plugin's
+`h += texelFetch( Bucket[ i ] ).r * Weight[ i ]` as the same sequential
+single-precision sum with the accumulator in the blender; what can differ is one
+rounding per term where a GPU compiler fuses the plugin's multiply-add. Said in the
+banner, the disclosure and here. If the plugin's sum pass is ever rewritten to index
+by constant (an unrolled sixteen, say), delete `PAGE_SUM` and run the plugin's.
+
+### What is a port, and therefore checked by nobody but a reader
+
+`Controls.cpp` function for function (the float laws rounded per step through
+`Math.fround`, `ExposureSeconds` in double as the C++); `Model.h`'s constants and
+presentation colours; `Spectral.h`'s seven weights per light **copied as numbers,
+not recomputed**; and `Wetplate::ProcessOpenGL` line for line: the clock (dt clamped
+to [1/240, 1/4], 1/60 on the first frame), the ring's bookkeeping (the cell,
+the advance, per-slot `start` and `seconds` in double), the window rule and the
+sixteen float weights, the take's edge trigger, arming and end at
+`elapsed ≥ Exposure − 1e-9`, the coating cache key (spelled by JavaScript, same
+job), `rescaleBuckets` (resample into scratch and swap the objects, as the C++
+swaps GL ids), and the pass order. Change any of those and change `demo/plugin.js`
+by hand to match.
+
+What the page does differently, all of it said on the page:
+
+- **The clock is the kit's**, declared seconds: no unit vote, no wall-clock fallback.
+  A paused page renders only when a control moves, and each such frame is worth
+  1/240 s, as a paused host's is. **Restart is the page's one addition**: the kit
+  sends its clock to 0, the plugin has no rule for a clock that runs backwards (a
+  slot that opened at 40 s would satisfy `start ≥ now − Exposure` for the next 40 s),
+  so a backward jump is taken as a fresh instance — `InitGL`'s reset of the ring, the
+  take and the clock.
+- **Take is a button under the canvas** (the kit has no event control), delivered
+  as `SetFloatParameter` delivers it: 1.0 then 0.0, edge-triggered on 0.5, consumed
+  on the next rendered frame; nothing in Continuous mode. No button in `?embed=1`.
+- **Buckets is a dropdown** of 2..16 (the kit has no integer type).
+- The page needs `EXT_color_buffer_float` (R32F targets), `EXT_float_blend` (the
+  expose pass ADDS into its bucket) and `OES_texture_float_linear` (the resample on a
+  resize) and refuses to start without any of them. The Perturb and Probe hooks are 0.
+  Output alpha is 1, so there is no backdrop menu. The About block is absent.
+
+### Measured once
+
+Driven frame by frame — the kit paused, the clock set to n / 60 for n = 0..30 by a
+script, exactly as `wttest --pipe --fps 60` clocks its frames — on the same 31 frames
+of the static colour-bars clip at 960×540, the page's frame 30 and the plugin's agree
+to within **1/255 on every pixel** (mean 0.0000, max 1; SwiftShader in headless Chrome
+against Metal GL, 2026-09-24). One frame, one clip, the defaults: the resize path,
+Take mode, an Exposure change mid-run and the other lights are exercised only by eye
+(the page's ring line reports 8 of 8 buckets, 0.45–0.50 s in the window; a take
+caps, exposes for 0.5 s and holds; 16 of 16 after a resize to 1280×720). Never seen
+on a GPU other than this one.
 
 ---
 

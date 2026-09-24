@@ -185,6 +185,26 @@ look has been seen on a synthetic card and on Resolume's bundled demo clips thro
 `wttest --pipe` (the project video), never on camera footage of people or places —
 which is where a blue-blind plate would show most. No OpenFX port and no presets.
 There is a [user guide](https://stoatworks-labs.com/software/wetplate/guide/).
+The browser demo below runs the plugin's shaders; its ring, window and take are a
+port that only a reader checks, and its sum pass is the page's own.
+
+## Browser demo
+
+[wetplate-demo.stoatworks-labs.com](https://wetplate-demo.stoatworks-labs.com/) runs
+the plugin's own shaders in WebGL2 on generated moving clips, with every control the
+plugin declares (Take is a button under the picture; Buckets is a dropdown). The
+shader bodies are copied unedited and `demo/tools/check_shaders.py` (run by
+`tools/verify.sh`) fails if a character drifts. One of the six will not compile in a
+browser: the sum pass indexes its sixteen bucket samplers with a loop variable, which
+GLSL ES 3.00 forbids, so the page carries it, reports the compiler's refusal on its
+face, and sums the same buckets in the same order with a one-bucket pass of its own
+drawn additively. The CPU half — the clock, the ring of bucket sums and its window,
+the take, the resample on a resize, the control laws in `Controls.cpp`, the weights in
+`Spectral.h` — is a hand port to JavaScript, and nothing checks a port but a reader.
+Driven frame by frame on the same 31 frames of colour bars at 960×540, the page and
+`wttest --pipe --fps 60` agree to within 1/255 on every pixel of frame 30 (measured
+once, 2026-09-24, SwiftShader against Metal GL). `demo/vendor/` is the shared kit from
+`stoatworks-backend/resolume-demo`; a push to main redeploys the Worker.
 
 ## Build
 
@@ -215,6 +235,7 @@ clock:
 ./build/wttest --bench                                 # 720p, 1080p, 4K, and the state held
 python3 tools/sweep.py                                 # no control is silently dead
 python3 tools/spectral_weights.py --check              # the weights recompute
+python3 demo/tools/check_shaders.py                    # the browser demo's shaders are the plugin's
 tools/verify.sh                                        # all of it, on a fresh universal build
 ```
 
