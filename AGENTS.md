@@ -232,9 +232,9 @@ at zero — never the harness's expectation.
 
 One character of the shipped GLSL, on a clean committed tree: in the coating
 pass, `sqrt( s ) - 2.0 / 3.0` → `sqrt( s ) + 2.0 / 3.0` (a coating whose mean is no
-longer 1). Caught by `--drainage`: a = 1.53 against 0.20 for every pour, the residual
+longer 1). Caught by `--drainage`: a = 1.80000 against 0.20000 for every pour (4 of its 8 checks), the residual
 untouched — which is right, the profile is still √s. Nothing else depends on the
-coating, so nothing else failed. Reverted with `git checkout source/Shaders.cpp`; the
+coating, so the other 39 checks passed. Reverted with `git checkout source/Shaders.cpp`; the
 tree was clean before and after.
 
 ---
