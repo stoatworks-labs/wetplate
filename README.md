@@ -37,6 +37,38 @@ Development and Sensitivity, two buckets against sixteen, Tone, and Mix back to 
 Rendered by the plugin's own harness over Resolume's bundled demo clips, not captured from
 Resolume.*
 
+<!-- downloads:start -->
+
+## Download
+
+**[v0.1.0](https://github.com/stoatworks-labs/wetplate/releases/tag/v0.1.0)** — prebuilt for macOS and Windows. Pick your platform:
+
+<details>
+<summary><b>macOS</b> — Universal (Apple Silicon + Intel)</summary>
+
+| Build | Download | Size |
+| --- | --- | --- |
+| Universal (Apple Silicon + Intel) · .dmg disk image | [`wetplate-0.1.0-macos-universal.dmg`](https://github.com/stoatworks-labs/wetplate/releases/download/v0.1.0/wetplate-0.1.0-macos-universal.dmg) | 221 KB |
+| Universal (Apple Silicon + Intel) · .zip archive | [`wetplate-macos-universal.zip`](https://github.com/stoatworks-labs/wetplate/releases/latest/download/wetplate-macos-universal.zip) | 182 KB |
+
+</details>
+
+<details>
+<summary><b>Windows</b> — x64</summary>
+
+| Build | Download | Size |
+| --- | --- | --- |
+| x64 · .exe installer | [`wetplate-0.1.0-windows-x86_64-setup.exe`](https://github.com/stoatworks-labs/wetplate/releases/download/v0.1.0/wetplate-0.1.0-windows-x86_64-setup.exe) | 222 KB |
+| x64 · .zip archive | [`wetplate-windows-x86_64.zip`](https://github.com/stoatworks-labs/wetplate/releases/latest/download/wetplate-windows-x86_64.zip) | 114 KB |
+
+</details>
+
+All builds, checksums and release notes: [github.com/stoatworks-labs/wetplate/releases](https://github.com/stoatworks-labs/wetplate/releases).
+
+macOS builds are signed and notarised and open normally. The Windows builds are unsigned, so SmartScreen warns once.
+
+<!-- downloads:end -->
+
 ## The one idea
 
 A wet collodion plate (1850s–80s, and the tintype revival) is silver halide in
