@@ -10,8 +10,9 @@ tell anybody this works.
 
 A collodion wet plate — blue-sensitive and seconds long — as an FFGL 2.1 effect
 (`WT01`, shown as `SW Wetplate`) for Resolume Arena and Avenue. C++17 + GLSL 4.10,
-CMake, universal macOS `.bundle` and a Windows `.dll`. MIT, intended for
-`github.com/stoatworks-labs/wetplate`.
+CMake, universal macOS `.bundle` and a Windows `.dll`. MIT; home
+`github.com/stoatworks-labs/wetplate`, released at v0.1.0 on 2026-09-24 with a user
+guide, a browser demo and a project video.
 
 Built 2026-09-24 in one session (tranche four) from the fleet's templates and
 `specs/SPEC-wetplate.md`: rebate for a photochemical process with a characteristic
@@ -136,8 +137,8 @@ did. A press is a press: InitGL leaves it alone now.
 
 The first look at Resolume's demo clips had every black background at sRGB 0.4:
 a fog of 0.065 density on the tintype is a = 0.14 of the silver over the plate,
-which is a grey. The fog law is now 0.004–0.030 (0.012 at the default); the
-plate's blacks are the plate. Same session, the one-second default turned every
+which is a grey. The fog law is now 0.004–0.030, rising with Development (0.017 at the
+default); the plate's blacks are the plate. Same session, the one-second default turned every
 fast VJ loop into streaks; the default is half a second, with 16 s on the slider.
 
 ### ☠️ The bench had the 4K upload on the clock
@@ -282,7 +283,8 @@ tree was clean before and after.
 - **Output alpha is 1.** See the trap.
 - **Test hooks live in the shipped plugin** (the `Perturb` bits in the shader and the
   CPU, `Probe` in the plate pass), always zero.
-- **No factory presets, no user guide** (`guide=""`), no browser demo, no OpenFX.
+- **No factory presets, no seed control, no OpenFX.** The user guide and the browser
+  demo came with the release.
 
 ---
 
@@ -331,12 +333,16 @@ build, at 320×180 and 1280×720.
 
 ### Assumed, or not done
 
-- ☠️ **Never loaded into Resolume.** Everything numeric was compiled, rendered and
-  measured offline against the real plugin class in a headless CGL context, plus an
-  `oxbow` load. Windows has never been compiled.
-- **Never seen on camera footage.** The pictures are the synthetic card and eight of
-  Resolume's bundled demo clips (CG loops) through `wttest --pipe`. Skin, foliage,
-  sky — where a blue-blind plate shows most — are unjudged.
+- ☠️ **Never loaded into Resolume on macOS.** Everything numeric was compiled, rendered
+  and measured offline against the real plugin class in a headless CGL context, plus an
+  `oxbow` load.
+- **Windows, in Resolume Arena 7.27.1** (win-lab, Mesa llvmpipe, no GPU, 2026-09-24): the v0.1.0 DLL loads from Extra Effects, registers as `SW Wetplate` / `WT01` / effect, all 21 host controls match the declaration, it renders and Arena's log stays clean: 8 of the fleet gate's 9 checks. Thirteen controls moved the picture; Exposure and Buckets read dead, because the gate's carrier is a still and a still integrates to the same plate at any window (a Buckets change resets a ring that refills with the same still before the probe reads it); Take is an event the gate cannot press. The harness's `--ghost`, `--bucket` and `--take` checks measure all three from the picture. Software rendering says nothing about a GPU or about speed.
+- **Never seen on camera footage.** The pictures are the synthetic card and Resolume's
+  bundled demo clips (CG loops) through `wttest --pipe`, for the survey and the project
+  video. Skin, foliage, sky — where a blue-blind plate shows most — are unjudged. The
+  video's survey found the defaults survive every bundled clip; a red clip (Cyberspace's
+  ERROR text) all but vanishes, as the weights say, and a strobed subject (the
+  astronaut) holds as its average over the window, which is what a plate does.
 - **The clock-unit voting** is readout's, which has met Arena; this plugin has not.
 - **The bare edge and the comets are judged by eye** on the demo clips and nothing
   checks them beyond the sweep.
@@ -344,7 +350,8 @@ build, at 320×180 and 1280×720.
 - **Not verified at 4K**, only benchmarked there.
 - **The 320×180 sweep is the only check of Light, Tone, Vignette, Bare Edge and
   Defects**: they change the picture; nothing measures how.
-- **`StoatworksAbout.h` and `ATTRIBUTIONS.md` are provisional hand copies.**
+- **`StoatworksAbout.h` and `ATTRIBUTIONS.md` are generated** by the backend's
+  `sync-about.py` and `sync-attributions.py`; do not hand-edit them.
 - **Nothing has been through a show.**
 
 ---

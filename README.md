@@ -14,8 +14,9 @@
 > a take stops changing on exactly the frame Exposure seconds after the event, and a
 > resize mid-exposure carries the exposure so far across — with seven negative
 > controls that prove each check can fail. It has **never been loaded into
-> Resolume**; it is loaded by [oxbow](https://github.com/stoatworks-labs/oxbow),
-> which is a real FFGL host and is not Resolume. See [Status](#status).
+> Resolume on macOS**; there it is loaded by [oxbow](https://github.com/stoatworks-labs/oxbow),
+> which is a real FFGL host and is not Resolume. On Windows it has run in Resolume
+> Arena 7.27.1, on software rendering. See [Status](#status).
 
 A collodion wet plate — blue-sensitive and seconds long — as an FFGL effect for
 [Resolume](https://resolume.com) Arena and Avenue.
@@ -133,15 +134,15 @@ Sixteen buckets at 4K is 570 MB. macOS figures only.
 
 ### Not established
 
-It has **never been loaded into Resolume**. Everything above was compiled, rendered
-and measured offline against the real plugin class in a headless CGL context, plus
-an `oxbow` load. How fifteen controls in four groups present in Arena's inspector,
-whether the `Take` button reads as a shutter, and what the host's clock does to the
-bucket grid over a long session are untested. The look has been seen on a synthetic
-card and on eight of Resolume's bundled demo clips through `wttest --pipe`, never on
-camera footage of people or places — which is where a blue-blind plate would show
-most. No OpenFX port and no browser demo, not in scope for 0.1.0. Windows has never
-been compiled.
+It has **never been loaded into Resolume on macOS**. Everything above was compiled,
+rendered and measured offline against the real plugin class in a headless CGL
+context, plus an `oxbow` load; every check also passes on Apple's software renderer
+(`WTTEST_RENDERER=software`), which is what CI's macOS runner has. **Windows, in Resolume Arena 7.27.1** (win-lab, Mesa llvmpipe, no GPU, 2026-09-24): the v0.1.0 DLL loads from Extra Effects, registers as `SW Wetplate` / `WT01` / effect, all 21 host controls match the declaration, it renders and Arena's log stays clean: 8 of the fleet gate's 9 checks. Thirteen controls moved the picture; Exposure and Buckets read dead, because the gate's carrier is a still and a still integrates to the same plate at any window (a Buckets change resets a ring that refills with the same still before the probe reads it); Take is an event the gate cannot press. The harness's `--ghost`, `--bucket` and `--take` checks measure all three from the picture. Software rendering says nothing about a GPU or about speed.
+What the host's clock does to the bucket grid over a long session is untested. The
+look has been seen on a synthetic card and on Resolume's bundled demo clips through
+`wttest --pipe` (the project video), never on camera footage of people or places —
+which is where a blue-blind plate would show most. No OpenFX port and no presets.
+There is a [user guide](https://stoatworks-labs.com/software/wetplate/guide/).
 
 ## Build
 
