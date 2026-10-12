@@ -1,41 +1,33 @@
 # wetplate
 
 > **AI-assisted project.** This codebase was created with [Claude](https://claude.com/claude-code)
-> (Anthropic), directed and reviewed by a human author. The plate is not asserted but
-> measured: an offline harness drives the real plugin class in a headless GL context
-> on a synthetic clock and reads each claim back out of the picture — pure red, green
-> and blue expose the plate in the ratio of weights computed from a published
-> collodion sensitivity curve and Smits' RGB-to-spectrum basis (red 7%, green 2%,
-> blue 98% of white), a square moving two pixels a frame leaves a smear each column
-> of which is exposed for exactly the fraction of the window it was covered, the
-> bucketed window is the exact per-frame box mean to within one bucket's edge, a
-> grey wedge maps through the stated characteristic curve to 6e-7 in density, the
-> coating along the drain axis is a + b√s with a and b what the drainage law says,
-> a take stops changing on exactly the frame Exposure seconds after the event, and a
-> resize mid-exposure carries the exposure so far across — with seven negative
-> controls that prove each check can fail. It has **never been loaded into
-> Resolume on macOS**; there it is loaded by [oxbow](https://github.com/stoatworks-labs/oxbow),
-> which is a real FFGL host and is not Resolume. On Windows it has run in Resolume
-> Arena 7.27.1, on software rendering. See [Status](#status).
+> (Anthropic), directed and reviewed by a human author. The plate is measured rather than
+> asserted: an offline harness drives the real plugin code on a synthetic clock and reads each
+> claim back out of the picture (the colour weights, the ghosts, the curve, the drainage, the
+> take and a resize mid-exposure), with seven negative controls to prove each check can fail.
+> It has **never been loaded into Resolume on macOS**; there it's loaded by
+> [oxbow](https://github.com/stoatworks-labs/oxbow), which is a real FFGL host but isn't
+> Resolume. On Windows it has run in Resolume Arena 7.27.1, on software rendering. The numbers
+> are under [Status](#status).
 
-A collodion wet plate — blue-sensitive and seconds long — as an FFGL effect for
-[Resolume](https://resolume.com) Arena and Avenue.
+A collodion wet plate as an FFGL effect for [Resolume](https://resolume.com) Arena and
+Avenue. It's blue-sensitive, seconds long and poured by hand, so your clip comes out looking
+like a Victorian tintype, ghosts and all.
 
 ![Resolume's demo clip Trinity through the plate: a ring's orbit stacked into a spiral of ghosts on a warm grey tintype with a bare pour edge and a few comets](docs/hero.png)
 
-<sub>One frame, rendered by `wttest --pipe`, the offline harness — not captured from
-Resolume. Resolume's bundled demo clip on the default tintype, half a second of
+<sub>One frame, rendered by `wttest --pipe`, the offline harness, rather than captured from
+Resolume. It's Resolume's bundled demo clip on the default tintype, with half a second of
 exposure.</sub>
 
 [![Wetplate — a wet collodion plate, blue-blind and seconds long, for Resolume](docs/video-thumb.png)](https://www.youtube.com/watch?v=jLU2btmbRLM)
 
-*[Watch it](https://www.youtube.com/watch?v=jLU2btmbRLM) — 67 seconds:
-the clip against the plate (orange skin dark, blue boots white), red text all but vanishing,
-Exposure stacking a ring's orbit into ghosts, a take capping the lens and holding the developed
-plate, tintype, ambrotype and negative, the pour's corner, drainage, bare edge and defects,
-Development and Sensitivity, two buckets against sixteen, Tone, and Mix back to the clip.
-Rendered by the plugin's own harness over Resolume's bundled demo clips, not captured from
-Resolume.*
+*[Watch it](https://www.youtube.com/watch?v=jLU2btmbRLM) (67 seconds): the clip against the
+plate (orange skin dark, blue boots white), red text all but vanishing, Exposure stacking a
+ring's orbit into ghosts, a take capping the lens and holding the developed plate, tintype,
+ambrotype and negative, the pour's corner, drainage, bare edge and defects, Development and
+Sensitivity, two buckets against sixteen, Tone, and Mix back to the clip. Rendered by the
+plugin's own harness over Resolume's bundled demo clips rather than captured from Resolume.*
 
 <!-- downloads:start -->
 
@@ -71,58 +63,56 @@ macOS builds are signed and notarised and open normally. The Windows builds are 
 
 ## The one idea
 
-A wet collodion plate (1850s–80s, and the tintype revival) is silver halide in
-collodion, exposed while wet. Two properties make the look, and both are in the
-plate, not in a grade.
+A wet collodion plate (1850s–80s, and the tintype revival) is silver halide in collodion,
+exposed while it's still wet. Two properties make the look, and both come from the plate
+rather than a grade.
 
-**It sees only ultraviolet and blue.** Its spectral sensitivity ends around 500 nm.
-So the plate's exposure is not the clip's brightness: it is the clip's light,
-weighted by a curve digitised from a published measurement of a collodion plate
-and integrated against a spectrum built from each pixel's RGB. Red light barely
-registers, so reds and skin render dark; a blue sky is blown to white.
+**It only sees ultraviolet and blue.** Its spectral sensitivity stops at around 500 nm. So
+the plate's exposure isn't the clip's brightness. It's the clip's light, weighted by a curve
+digitised from a published measurement of a collodion plate and integrated against a
+spectrum built from each pixel's RGB. Red light barely registers, so reds and skin come out
+dark, and a blue sky blows out to white.
 
-**It is slow.** Exposures run for seconds. The plate integrates light for the whole
-exposure, so anything that moved is a translucent ghost in proportion to how long
-it stayed, and anything that held still is sharp.
+**It's slow.** Exposures run for seconds. The plate integrates light for the whole exposure,
+so anything that moved turns into a translucent ghost, denser the longer it stayed, and
+anything that held still is sharp (which is why Victorian portrait studios kept head clamps).
 
-Then it was hand-poured, so the coating is thicker where it drained, bare where the
-pour never reached, and marked where dust kept the silver bath off.
+And it was poured by hand, so the coating's thicker where it drained, bare where the pour
+never reached, and marked where dust kept the silver bath off.
 
 ## What falls out
 
-None of these is drawn. Each is one stage of the plate doing what it does:
+None of these is drawn on. Each is one stage of the plate doing what it does:
 
-- **Reds go black, skies go white.** From the spectral weighting alone: under
-  daylight, pure red exposes the plate to 7% of white, pure green to 2%, pure blue
-  to 98%. A red neon is a dark shape; a cream skull is white.
-- **Motion becomes a ghost** with density exactly the fraction of the exposure a
-  thing spent in one place. A ring on an orbit stacks into a spiral. The window is a
-  sliding box of `Exposure` seconds, held as a ring of `Buckets` bucket sums so
-  memory is a fixed number of frames at any exposure; the window is exact to one
-  bucket's width, and the harness measures that bound.
-- **A take.** In `Take` mode the plate is capped until the `Take` event, integrates
-  for `Exposure` seconds, and then holds the developed plate.
-- **Pour marks.** The coating thickness follows thin-film drainage — √s along the
-  path from the `Pour` corner to its opposite — and density scales with it, so the
-  drain corner is heavier and the pour corner thin. `Bare Edge` is where the pour
-  never reached; `Defects` are dust specks and comets whose tails run down the
-  drain.
+- **Reds go black, skies go white.** That's the spectral weighting on its own: in daylight,
+  pure red exposes the plate to 7% of white, pure green to 2% and pure blue to 98%. A red
+  neon is a dark shape; a cream skull is white.
+- **Motion becomes a ghost**, with a density that's exactly the fraction of the exposure a
+  thing spent in one place. A ring on an orbit stacks into a spiral. The window is a sliding
+  box of `Exposure` seconds, held as a ring of `Buckets` bucket sums so the memory is a
+  fixed number of frames at any exposure. The window's exact to within one bucket's width,
+  and the harness measures that bound.
+- **A take.** In `Take` mode the plate stays capped until the `Take` event, integrates for
+  `Exposure` seconds, then holds the developed plate.
+- **Pour marks.** The coating thickness follows thin-film drainage (√s along the path from
+  the `Pour` corner to its opposite) and density scales with it, so the drain corner's
+  heavier and the pour corner thin. `Bare Edge` is where the pour never reached, and
+  `Defects` are dust specks and comets whose tails run down the drain.
 - **The plate.** A tintype (silver over black japanned iron, warm), an ambrotype
   (silver over black glass, cooler) or a glass negative on a light box.
 
 ### The honest limit
 
-The plate sees a spectrum built from three numbers per pixel, so the spectral
-weighting is Smits' smooth reconstruction of an RGB, not the scene's real spectrum,
-and the ultraviolet the plate also sees is absent because a clip's pixels say
-nothing about it. The sensitivity curve is digitised from a published figure to
-about ±0.03, not taken from a table. The lights are Planckian radiators at the
-CIE's colour temperatures rather than the CIE daylight tables. The characteristic
-curve is a stated shape with numbers chosen inside the published picture of a
-high-contrast, short-latitude material, not fitted to a measured plate. Grain is
-not modelled: collodion is extremely fine-grained, and at video rasters it would
-be below a pixel. The bare edge and the comets are seeded shapes, not a fluid
-simulation.
+The plate sees a spectrum built from three numbers per pixel, so the spectral weighting is
+Smits' smooth reconstruction of an RGB rather than the scene's actual spectrum, and the
+ultraviolet the plate also sees isn't there at all, because a clip's pixels say nothing about
+it. The sensitivity curve is digitised from a published figure to about ±0.03, not taken from
+a table. The lights are Planckian radiators at the CIE's colour temperatures rather than the
+CIE daylight tables. The characteristic curve is a stated shape, with numbers chosen to sit
+inside the published picture of a high-contrast, short-latitude material, not fitted to a
+measured plate. Grain isn't modelled: collodion is extremely fine-grained, and at video
+rasters it'd be smaller than a pixel. The bare edge and the comets are seeded shapes, not a
+fluid simulation.
 
 ## Controls
 
@@ -133,21 +123,21 @@ simulation.
 | **Coating** | Pour (Top Left, Top Right, Bottom Left, Bottom Right), Coating Var, Bare Edge, Defects. |
 | **Output** | Tone (neutral to warm), Vignette, Mix. |
 
-The defaults are a tintype in daylight at the plate's stated γ of 1.2, half a
-second of exposure in eight buckets, poured from the top left with a modest drain, a
-little bare edge, a few defects, slightly warm. Half a second rather than the
-seconds a real plate took, because on Resolume's demo clips a full second turned
-every fast loop into streaks; `Exposure` goes to 16 s for a still subject.
+The defaults are a tintype in daylight at the plate's stated γ of 1.2, half a second of
+exposure in eight buckets, poured from the top left with a modest drain, a little bare edge,
+a few defects, and slightly warm. It's half a second rather than the seconds a real plate
+took, because on Resolume's demo clips a full second turned every fast loop into streaks.
+`Exposure` goes up to 16 s for a still subject.
 
 ## Status
 
-**v0.1.0, and honestly early — 24 September 2026.**
+**v0.1.0, and still early days (24 September 2026).**
 
 ### Measured offline, on macOS
 
-`tools/verify.sh` passes on this machine (M4 Max, macOS 26.4) against a fresh
-universal Release build, running every check at **two rasters**, 320×180 and
-1280×720. What it establishes, in numbers:
+`tools/verify.sh` passes on this Mac (M4 Max, macOS 26.4) against a fresh universal Release
+build, running every check at two rasters, 320×180 and 1280×720. Here's what it shows, in
+numbers:
 
 | check | result |
 | --- | --- |
@@ -166,45 +156,55 @@ universal Release build, running every check at **two rasters**, 320×180 and
 | `--pipe` | 2.5 frames in, exactly 2 out; an unknown cue refused; a closed stdout and a failed render exit 1; an option cue steps, an event cue fires on its frame |
 | the bundle | universal (`x86_64 arm64`), exports `plugMain`, ad-hoc signs; `oxbow` reports `SW Wetplate` / `WT01` / `effect` and renders 120 frames through `plugMain` |
 
-Render cost at the defaults, best of three runs of 60 frames after a warm-up,
-`glFinish` both sides, on a GPU shared with other work: **0.12 ms** at 720p,
-**0.29 ms** at 1080p, **1.14 ms** at 4K — under a tenth of a 60 fps frame. The
-state held across frames, at the default eight buckets, is (Buckets + 2) R32F
-frames: **35 MB** at 720p, **79 MB** at 1080p, **316 MB** at 4K, colour textures
-only; the SDK's FBO adds a depth renderbuffer to each that the plugin never uses.
-Sixteen buckets at 4K is 570 MB. macOS figures only.
+Render cost at the defaults, best of three runs of 60 frames after a warm-up, `glFinish`
+both sides, on a GPU shared with other work: **0.12 ms** at 720p, **0.29 ms** at 1080p and
+**1.14 ms** at 4K, which is under a tenth of a 60 fps frame. The state held across frames at
+the default eight buckets is (Buckets + 2) R32F frames: **35 MB** at 720p, **79 MB** at
+1080p and **316 MB** at 4K, counting colour textures only; the SDK's FBO adds a depth
+renderbuffer to each, which the plugin never uses. Sixteen buckets at 4K is 570 MB. These
+are macOS figures only.
 
 ### Not established
 
-It has **never been loaded into Resolume on macOS**. Everything above was compiled,
-rendered and measured offline against the real plugin class in a headless CGL
-context, plus an `oxbow` load; every check also passes on Apple's software renderer
-(`WTTEST_RENDERER=software`), which is what CI's macOS runner has. **Windows, in Resolume Arena 7.27.1** (win-lab, Mesa llvmpipe, no GPU, 2026-09-24): the v0.1.0 DLL loads from Extra Effects, registers as `SW Wetplate` / `WT01` / effect, all 21 host controls match the declaration, it renders and Arena's log stays clean: 8 of the fleet gate's 9 checks. Thirteen controls moved the picture; Exposure and Buckets read dead, because the gate's carrier is a still and a still integrates to the same plate at any window (a Buckets change resets a ring that refills with the same still before the probe reads it); Take is an event the gate cannot press. The harness's `--ghost`, `--bucket` and `--take` checks measure all three from the picture. Software rendering says nothing about a GPU or about speed.
-What the host's clock does to the bucket grid over a long session is untested. The
+It has **never been loaded into Resolume on macOS**. Everything above was compiled, rendered
+and measured offline against the real plugin class in a headless CGL context, plus an
+`oxbow` load, and every check also passes on Apple's software renderer
+(`WTTEST_RENDERER=software`), which is what CI's macOS runner has.
+
+**Windows, in Resolume Arena 7.27.1** (win-lab, Mesa llvmpipe, no GPU, 2026-09-24): the
+v0.1.0 DLL loads from Extra Effects and registers as `SW Wetplate` / `WT01` / effect, all 21
+host controls match the declaration, it renders, and Arena's log stays clean. That's 8 of the
+fleet gate's 9 checks. Thirteen controls moved the picture. Exposure and Buckets read dead,
+because the gate's carrier is a still, and a still integrates to the same plate at any window
+(a Buckets change resets a ring that refills with the same still before the probe reads it).
+Take is an event the gate can't press. The harness's `--ghost`, `--bucket` and `--take`
+checks measure all three from the picture. Software rendering says nothing about a GPU or
+about speed.
+
+What the host's clock does to the bucket grid over a long session hasn't been tested. The
 look has been seen on a synthetic card and on Resolume's bundled demo clips through
-`wttest --pipe` (the project video), never on camera footage of people or places —
-which is where a blue-blind plate would show most. No OpenFX port and no presets.
-There is a [user guide](https://stoatworks-labs.com/software/wetplate/guide/).
-The browser demo below runs the plugin's shaders; its ring, window and take are a
-port that only a reader checks, and its sum pass is the page's own.
+`wttest --pipe` (the project video), but never on camera footage of people or places, which
+is where a blue-blind plate would show most. There's no OpenFX port and there are no
+presets. There is a [user guide](https://stoatworks-labs.com/software/wetplate/guide/). The
+browser demo below runs the plugin's shaders; its ring, window and take are a port that only
+a reader checks, and its sum pass is the page's own.
 
 ## Browser demo
 
-[wetplate-demo.stoatworks-labs.com](https://wetplate-demo.stoatworks-labs.com/) runs
-the plugin's own shaders in WebGL2 on generated moving clips, with every control the
-plugin declares (Take is a button under the picture; Buckets is a dropdown). The
-shader bodies are copied unedited and `demo/tools/check_shaders.py` (run by
-`tools/verify.sh`) fails if a character drifts. One of the six will not compile in a
-browser: the sum pass indexes its sixteen bucket samplers with a loop variable, which
-GLSL ES 3.00 forbids, so the page carries it, reports the compiler's refusal on its
-face, and sums the same buckets in the same order with a one-bucket pass of its own
-drawn additively. The CPU half — the clock, the ring of bucket sums and its window,
-the take, the resample on a resize, the control laws in `Controls.cpp`, the weights in
-`Spectral.h` — is a hand port to JavaScript, and nothing checks a port but a reader.
-Driven frame by frame on the same 31 frames of colour bars at 960×540, the page and
-`wttest --pipe --fps 60` agree to within 1/255 on every pixel of frame 30 (measured
-once, 2026-09-24, SwiftShader against Metal GL). `demo/vendor/` is the shared kit from
-`stoatworks-backend/resolume-demo`; a push to main redeploys the Worker.
+[wetplate-demo.stoatworks-labs.com](https://wetplate-demo.stoatworks-labs.com/) runs the
+plugin's own shaders in WebGL2 on generated moving clips, with every control the plugin
+declares (Take is a button under the picture; Buckets is a dropdown). The shader bodies are
+copied unedited and `demo/tools/check_shaders.py` (run by `tools/verify.sh`) fails if a
+character drifts. One of the six won't compile in a browser: the sum pass indexes its sixteen
+bucket samplers with a loop variable, which GLSL ES 3.00 doesn't allow, so the page carries
+it anyway, shows the compiler's refusal on screen, and sums the same buckets in the same
+order with a one-bucket pass of its own, drawn additively. The CPU half (the clock, the ring
+of bucket sums and its window, the take, the resample on a resize, the control laws in
+`Controls.cpp`, the weights in `Spectral.h`) is a hand port to JavaScript, and nothing checks
+a port except a person reading it. Driven frame by frame on the same 31 frames of colour bars
+at 960×540, the page and `wttest --pipe --fps 60` agree to within 1/255 on every pixel of
+frame 30 (measured once, 2026-09-24, SwiftShader against Metal GL). `demo/vendor/` is the
+shared kit from `stoatworks-backend/resolume-demo`, and a push to main redeploys the Worker.
 
 ## Build
 
@@ -223,8 +223,7 @@ macOS builds are universal (Apple Silicon + Intel) by default; add
 
 ## Building and testing
 
-The offline harness renders the real plugin class headlessly, on a synthetic 60 fps
-clock:
+The offline harness renders the real plugin class headless, on a synthetic 60 fps clock:
 
 ```bash
 ./build/wttest --out /tmp/frame.png --size 1920x1080   # the moving card
@@ -248,8 +247,8 @@ ffmpeg -i in.mov -f rawvideo -pix_fmt rgba - \
   | ffmpeg -f rawvideo -pix_fmt rgba -s 1920x1080 -i - out.mov
 ```
 
-See [`CLAUDE.md`](CLAUDE.md) for the full command reference and
-[`AGENTS.md`](AGENTS.md) for the model and the traps.
+[`CLAUDE.md`](CLAUDE.md) has the full command reference, and [`AGENTS.md`](AGENTS.md) the
+model and the traps.
 
 <!-- attributions:start -->
 This project is built on other people's work — see [ATTRIBUTIONS.md](ATTRIBUTIONS.md).
