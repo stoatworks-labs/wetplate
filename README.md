@@ -160,9 +160,8 @@ Render cost at the defaults, best of three runs of 60 frames after a warm-up, `g
 both sides, on a GPU shared with other work: **0.12 ms** at 720p, **0.29 ms** at 1080p and
 **1.14 ms** at 4K, which is under a tenth of a 60 fps frame. The state held across frames at
 the default eight buckets is (Buckets + 2) R32F frames: **35 MB** at 720p, **79 MB** at
-1080p and **316 MB** at 4K, counting colour textures only; the SDK's FBO adds a depth
-renderbuffer to each, which the plugin never uses. Sixteen buckets at 4K is 570 MB. These
-are macOS figures only.
+1080p and **316 MB** at 4K, and that is all of it: the buffers have no depth attachment.
+Sixteen buckets at 4K is 570 MB. These are macOS figures only.
 
 ### Not established
 

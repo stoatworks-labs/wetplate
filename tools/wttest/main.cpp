@@ -1342,9 +1342,9 @@ int runBench( Wetplate& plugin, int frames, double fps )
 		             ms / 16.667 * 100.0, static_cast< double >( bytes ) / 1048576.0 );
 	}
 	std::printf( "\nState is ( Buckets + 2 ) R32F frames: the buckets, the exposure sum and the\n"
-	             "coating, colour textures only. The SDK's FBO attaches a depth renderbuffer to\n"
-	             "each that the plugin never uses and this does not count. Whatever the\n"
-	             "settings above were, they are what was measured; --set measures another.\n" );
+	             "coating: colour textures, which is all of it, as the buffers have no depth\n"
+	             "attachment. Whatever the settings above were, they are what was measured;\n"
+	             "--set measures another.\n" );
 	return 0;
 }
 

@@ -330,8 +330,8 @@ build, at 320×180 and 1280×720.
   | 1920×1080 | 0.31 | 1.9% | 79 MB |
   | 3840×2160 | 1.25 | 7.5% | 316 MB |
 
-  State is (Buckets + 2) R32F frames, colour textures only; the SDK's FBO also
-  attaches a depth renderbuffer to each, which the plugin never uses.
+  State is (Buckets + 2) R32F frames, and that is all of it: the buffers have no
+  depth attachment.
 
 ### Assumed, or not done
 

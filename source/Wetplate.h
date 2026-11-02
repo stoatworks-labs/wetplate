@@ -61,9 +61,8 @@ public:
 	void SetProbeForTest( int probe );
 
 	/// Bytes of GPU state held across frames right now: every bucket in
-	/// use, the exposure sum and the coating, colour texture only. The SDK's
-	/// FBO also attaches a depth renderbuffer to each, which this does not
-	/// count and the plugin never uses.
+	/// use, the exposure sum and the coating. That is all of it: the colour
+	/// textures, as `PassBuffer` attaches no depth buffer.
 	size_t StateBytesForTest() const;
 
 	/// The window as the plugin has it: how many buckets hold seconds, and
