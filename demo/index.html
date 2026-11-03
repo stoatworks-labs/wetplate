@@ -8,16 +8,44 @@
     <link rel="icon" href="data:," />
     <link rel="stylesheet" href="./vendor/kit.css" />
     <link rel="canonical" href="https://wetplate-demo.stoatworks-labs.com/" />
+    <meta name="project-page" content="https://stoatworks-labs.com/software/wetplate/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Stoatworks Labs" />
+    <meta property="og:title" content="Wetplate — browser demo | Stoatworks Labs" />
+    <meta property="og:description" content="Try the Wetplate FFGL plugin for Resolume in your browser: a collodion wet plate, blue-blind and seconds long. The plugin's own expose, coating, resample and plate shaders ported to WebGL2, with its ring of bucket sums, its window, its take and its control laws ported to JavaScript; the sum pass is the page's own because the plugin's will not compile in a browser." />
+    <meta property="og:url" content="https://wetplate-demo.stoatworks-labs.com/" />
+    <meta property="og:image" content="https://stoatworks-labs.com/thumbs/wetplate.png" />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="720" />
+    <meta property="og:image:alt" content="Wetplate" />
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <main id="demo">
       <noscript>
+        <h1>Wetplate</h1>
+        <p>
+          An FFGL effect that exposes your clip onto a collodion wet plate. The
+          plate only sees blue and ultraviolet, weighted by a published
+          sensitivity curve integrated against a spectrum built from each
+          pixel's RGB, and it's slow, gathering light over a sliding window of
+          seconds, so anything that moved is a ghost as dense as the fraction of
+          the exposure it stayed for. Reds go black and skies go white, motion
+          stacks up into ghosts, a take exposes and then holds the developed
+          plate, and the hand-poured coating drains towards one corner, with a
+          bare pour edge and dust comets. Tintype, ambrotype or glass negative.
+        </p>
         <p>
           This demo runs the plugin's shaders in your browser, so it needs
           JavaScript and WebGL2. The plugin itself, its source and its downloads
           are on
           <a href="https://github.com/stoatworks-labs/wetplate">its repository</a>.
         </p>
+        <ul>
+          <li><a href="https://stoatworks-labs.com/software/wetplate/">Project page and downloads</a></li>
+          <li><a href="https://stoatworks-labs.com/software/wetplate/guide/">User guide</a></li>
+          <li><a href="https://github.com/stoatworks-labs/wetplate">Source on GitHub</a></li>
+        </ul>
       </noscript>
     </main>
 
